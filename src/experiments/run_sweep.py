@@ -2,19 +2,6 @@
 """
 src/experiments/run_sweep.py
 
-Minimal experiment-sweep orchestration driver (PIPELINE.md Stage 6).
-
-Reads a small JSON config listing a sequence of runs -- each specifying a
-mode (zero_shot / few_shot / finetuned), model/adapter, dataset, and
-metadata strategy -- and invokes the appropriate canonical evaluation
-script (04_run_zero_shot_baseline.py or 04_evaluate_finetuned.py) as a
-subprocess for each. Per PIPELINE.md, the goal is not complexity but
-reducing manual mistakes when running metadata ablations or model
-comparisons: every run uses the exact same shared evaluation code paths
-those scripts already call (evaluation/generation.py, evaluation/eval_runner.py,
-prompting/prompt_builder.py) -- the only differences across a sweep are
-whatever the config file actually varies.
-
 This driver does not interpret results -- it runs each entry sequentially,
 logs success/failure/timing, and writes a sweep manifest pointing at each
 run's own output files for later aggregation. It does not parallelize
