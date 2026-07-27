@@ -12,6 +12,7 @@ Summary:
 - writes per-example JSONL plus summary JSON files, including a per-example
   failure-taxonomy bucket for paper error analysis
 
+Produces results for Section 6: Results and Discussion - Zero-Shot Baseline: Structural Induction Bottleneck and Section 6: Results and Discussion - Few-Shot Evaluation: Structural Grounding Without Parameter Updates.
 """
 
 from __future__ import annotations
