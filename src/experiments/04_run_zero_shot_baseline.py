@@ -11,7 +11,6 @@ Summary:
 - supports metadata-aware prompt variants
 - writes per-example JSONL plus summary JSON files, including a per-example
   failure-taxonomy bucket for paper error analysis
-- keeps decoding conservative for reproducible AAAI baselines
 
 """
 
