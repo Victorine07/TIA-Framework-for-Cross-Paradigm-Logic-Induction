@@ -15,6 +15,9 @@ Failure categories:
 Usage:
     python src/analysis/failure_modes.py
     python src/analysis/failure_modes.py --dataset test --mode finetuned
+
+Produces the error taxonomy reported in Section 6: Results and Discussion (Error Taxonomy: Tracing the Failure Trajectory).
+
 """
 
 from __future__ import annotations
