@@ -11,6 +11,8 @@ Writes: reports/paper/tables/mode_comparison.tex
 Usage:
     python src/analysis/compare_modes.py
     python src/analysis/compare_modes.py --dataset test
+
+Produces the learning-regime comparison table for Section 6: Results and Discussion (zero-shot vs. few-shot vs. SFT deltas).
 """
 
 from __future__ import annotations
