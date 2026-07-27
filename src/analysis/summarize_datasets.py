@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 summarize_datasets.py
-Compute ground-truth dataset composition statistics for the AAAI paper.
+Compute ground-truth dataset composition statistics 
 
 Reads: datasets/raw/*.jsonl, datasets/processed/{train,val,test}.jsonl,
        datasets/unseen/*.jsonl
