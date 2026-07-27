@@ -31,6 +31,8 @@ Outputs:
 
 Typical usage:
     python src/training/03_build_finetune_data.py --splits train,val
+
+Builds training data for Section 5: Experimental Setup under each metadata strategy from Section 3: Tiered Isomorphic Alignment - Metadata Strategy Ablation.
 """
 
 from __future__ import annotations
