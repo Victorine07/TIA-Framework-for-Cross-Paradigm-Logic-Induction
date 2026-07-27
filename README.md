@@ -108,6 +108,25 @@ Resource requirements per stage are documented inside each job block.
 
 ---
 
+## Verification
+### Python implementations
+Each cipher module contains built-in test vectors (official KAT or designer reference vectors). Run all of them with:
+```bash
+python scripts/verify_python_ciphers.py
+```
+To test a single cipher:
+```bash
+python scripts/verify_python_ciphers.py --cipher xtea_64_128
+```
+Exit code 0 means all tested ciphers passed. The script prints a per-cipher summary and a final count.
+### Isabelle/HOL theories
+Each `.thy` file in `thy ciphers/` can be type-checked by Isabelle 2025. The directory includes a `ROOT` file that defines the `TIA_Ciphers` session, so all 47 theories can be verified in one command:
+```bash
+isabelle build -d "thy ciphers" TIA_Ciphers
+```
+Individual theories can also be opened interactively with `isabelle jedit`.
+---
+
 ## Pre-trained Adapters
 
 LoRA adapter weights (both models, `none` and `structured` metadata strategies) are available on Hugging Face.
