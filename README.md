@@ -38,15 +38,16 @@ TIA fine-tuned models generalize to unseen cipher families with Overall scores o
 
 ## Requirements
 
-- Python 3.9+
+- Python 3.10+
 - Isabelle 2025 (for formal verification; not required for dataset use or model training)
-- PyTorch 2.1+
-- `transformers`, `peft`, `bitsandbytes`, `trl`
-- `datasets`, `numpy`, `matplotlib`
+- PyTorch 2.1+ with CUDA 11.8
+- See `requirements.txt` for the full dependency list
 
-Install with:
+Install:
 ```bash
-pip install torch transformers peft bitsandbytes trl datasets numpy matplotlib
+# GPU training (CUDA 11.8 wheel)
+pip install torch==2.1.2 --index-url https://download.pytorch.org/whl/cu118
+pip install -r requirements.txt
 ```
 
 ---
@@ -84,18 +85,32 @@ python src/training/03_finetune.py \
 
 **5. Evaluate the fine-tuned model:**
 ```bash
-python src/training/04_evaluate_finetuned.py \
-  --model Qwen/Qwen2.5-Coder-7B-Instruct \
+python src/experiments/04_evaluate_finetuned.py \
+  --base-model Qwen/Qwen2.5-Coder-7B-Instruct \
   --adapter-path checkpoints/<run_dir> \
-  --dataset datasets/processed/test.jsonl \
+  --dataset test \
   --output-dir results/finetuned
 ```
 
 ---
 
+## Cluster / HPC Execution
+
+`cluster_jobs.sh` contains SLURM job templates for every pipeline stage (data prep, zero-shot, few-shot, SFT training, fine-tuned evaluation). Replace the three placeholders at the top of the file before submitting:
+
+| Placeholder | Replace with |
+|---|---|
+| `SLURM_ACCOUNT` | your cluster account / project allocation |
+| `CONDA_ENV_PATH` | absolute path to the conda environment |
+| `PROJECT_DIR` | absolute path to the repository root |
+
+Resource requirements per stage are documented inside each job block.
+
+---
+
 ## Pre-trained Adapters
 
-LoRA adapter weights (both models, `none` and `structured` metadata strategies) are available on Hugging Face:
+LoRA adapter weights (both models, `none` and `structured` metadata strategies) are available on Hugging Face.
 The base models are `Qwen/Qwen2.5-Coder-7B-Instruct` and `deepseek-ai/DeepSeek-Coder-V2-Lite-Instruct`, available directly from Hugging Face Hub.
 
 ---
