@@ -1,4 +1,15 @@
 #!/usr/bin/env python3
+"""
+00_prepare_datasets.py
+
+Pipeline stage 0: merge per-cipher JSONL extractions into a unified raw
+dataset. Reads individual extractor outputs from datasets/raw/, deduplicates
+records, validates required schema fields, and writes the combined dataset
+consumed by the split-creation stage.
+
+Corresponds to Section 3: Tiered Isomorphic Alignment - Cipher Selection and Dataset Design (dataset assembly before split construction).
+"""
+
 import argparse
 import json
 import shutil
