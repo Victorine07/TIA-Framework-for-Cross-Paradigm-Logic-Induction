@@ -13,12 +13,6 @@ Summary:
   failure-taxonomy bucket for paper error analysis
 - keeps decoding conservative for reproducible AAAI baselines
 
-This script is intentionally a thin wrapper: model/tokenizer loading and
-batched generation live in evaluation/generation.py, and metric
-computation/aggregation/failure-classification live in
-evaluation/eval_runner.py. 04_evaluate_finetuned.py imports the exact same
-modules so zero-shot, few-shot, and fine-tuned results can never silently
-diverge due to implementation drift (per CLAUDE.md / EVALUATION.md).
 """
 
 from __future__ import annotations
@@ -167,7 +161,7 @@ def main() -> None:
         action="store_true",
         default=False,
         help="Enable trust_remote_code when loading tokenizer/model "
-        "(required for some model repos, e.g. DeepSeek-Coder-V2; see progress.md)",
+        "(required for some model repos, e.g. DeepSeek-Coder-V2)",
     )
     parser.add_argument(
         "--few-shot-k",
