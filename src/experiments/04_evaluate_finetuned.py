@@ -5,6 +5,8 @@
 Evaluates a fine-tuned (LoRA-adapted) model using the exact same prompt
 construction, generation wrapper, normalization, and SV/SM/VC metric
 pipeline as the zero-shot/few-shot baseline (04_run_zero_shot_baseline.py).
+
+Produces results for Section 6: Results and Discussion - TIA Fine-Tuning: Achieving Verification-Ready Translation.
 """
 
 from __future__ import annotations
