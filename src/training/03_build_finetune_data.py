@@ -3,13 +3,7 @@
 03_build_finetune_data.py
 
 Stage 3a: build fine-tuning-ready (prompt, completion) pairs from the
-canonical evaluation registry's train/val splits.
-
-This is the first half of the previously-missing 03_* fine-tuning stage
-(see REPO_MAP.md). It is intentionally separate from 03_finetune.py: this
-script is tokenizer-agnostic (plain text in, plain text out), so the same
-built dataset can be reused across different base models without rebuilding
-it per model.
+canonical evaluation registry's train/val splits
 
 What this script does:
     1. Loads the canonical eval registry (same one 02_build_eval_registry.py
