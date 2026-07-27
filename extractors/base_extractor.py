@@ -79,6 +79,9 @@ def first_nonempty_line(text: str) -> str:
 
 
 @dataclass
+# Corresponds to Algorithm 1 (Section 3: Tiered Isomorphic Alignment - Dataset Construction and Registry): the aligned instruction-input-output record
+# produced for each (p_i, i_j) pair. Fields encode tier label, parametric metadata,
+# and source/target code for one Python ↔ Isabelle/HOL component pair.
 class JsonlRecord:
     schema_version: str
     record_id: str
@@ -141,6 +144,9 @@ def validate_record_dict(data: Dict[str, Any]) -> None:
 
 
 class BaseCipherExtractor(ABC):
+    # Implements the registry-driven extractor described in Section 3: Tiered Isomorphic Alignment
+    # - Dataset Construction and Registry; instantiated per cipher family via Algorithm 1 (same section).
+    # Subclasses override extract_components() to produce T1–T4 aligned pairs.
     """
     Flexible base extractor for all cipher families.
     No longer forces SPARX-specific keys.
@@ -248,6 +254,8 @@ class BaseCipherExtractor(ABC):
     # ========== Extraction Helpers ==========
 
     def extract_python_function(self, function_name: str) -> Optional[str]:
+        # Implements DecomposePython(c, τ) from Algorithm 1 (Section 3: Tiered Isomorphic Alignment - Dataset Construction and Registry): isolates
+        # a tier-specific Python component from the cipher source file.
         """Extract a top-level function from Python source."""
         if self.python_ast is not None:
             result = self._extract_python_function_ast(function_name)
@@ -301,6 +309,9 @@ class BaseCipherExtractor(ABC):
         return sanitize_code_block(match.group(0)) if match else None
 
     def extract_isabelle_definition(self, symbol_name: str) -> Optional[str]:
+        # Implements MapIsabelle(t, τ) from Algorithm 1 (Section 3: Tiered Isomorphic Alignment - Dataset Construction and Registry): extracts the
+        # corresponding Isabelle/HOL definition for 1-to-1 alignment with the Python
+        # component at the same tier.
         """Extract Isabelle definition by name."""
         lines = self.thy_source.splitlines()
         start_idx = None
@@ -348,6 +359,9 @@ class BaseCipherExtractor(ABC):
     # ========== Semantic Analysis ==========
 
     def analyze_python_semantics(self, code: str) -> Dict[str, Any]:
+        # Implements ExtractParametricMetadata(c) from Algorithm 1 (Section 3: Tiered Isomorphic Alignment - Dataset Construction and Registry):
+        # computes semantic operator labels, structural flags (loops, recursion,
+        # conditionals), and transformation patterns used to enrich S_meta.
         lowered = code.lower()
         try:
             contains_loop = any(isinstance(node, (ast.For, ast.While)) for node in ast.walk(ast.parse(code)))
@@ -379,6 +393,9 @@ class BaseCipherExtractor(ABC):
 
     @abstractmethod
     def extract_components(self) -> List[JsonlRecord]:
+        # Abstract entry point for Algorithm 1 (Section 3: Tiered Isomorphic Alignment - Dataset Construction and Registry): subclasses implement
+        # the full loop over tiers T1–T4, producing aligned (instr, p_i, i_j, S_meta)
+        # records for every component of the cipher.
         """Extract all components - must be implemented by subclass."""
         raise NotImplementedError
         
