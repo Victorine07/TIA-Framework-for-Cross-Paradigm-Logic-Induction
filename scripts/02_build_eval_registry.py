@@ -3,7 +3,7 @@
 Script: 02_build_eval_registry.py
 
 Purpose:
-    Build a canonical evaluation registry for AAAI experiments from processed
+    Build a canonical evaluation registry for experiments from processed
     in-distribution splits and held-out evaluation datasets.
 
 What this script does:
@@ -22,17 +22,10 @@ Inputs:
     - datasets/processed/split_summary.json
     - datasets/processed/split_indices.json
     - datasets/unseen/*.jsonl
-    - optional dataset manifest from 00_prepare_aaai_datasets.py
+    - optional dataset manifest from 00_prepare_datasets.py
 
 Outputs:
     - datasets/processed/eval_registry_*.json
-
-Why this exists:
-    The earlier ICML pipeline mixed dataset selection logic directly into
-    training/evaluation code. This script separates dataset bookkeeping from
-    runtime experimentation, improves portability across local and cluster
-    environments, and makes the meaning of in-distribution versus cipher-holdout
-    evaluation explicit.
 
 Notes:
     - Unseen datasets are labeled as cipher-holdout evaluation by default.
@@ -42,8 +35,7 @@ Notes:
       are better for portability; absolute paths are convenient for local
       debugging.
 
-Typical usage:
-    python scripts/02_build_eval_registry.py --root . --tag aaai_family_holdout_v1
+Corresponds to Section 3: Tiered Isomorphic Alignment - Dataset Construction and Registry (canonical registry that all experiment scripts consume).
 """
 
 import argparse
@@ -183,7 +175,7 @@ def discover_unseen_files(unseen_dir: Path) -> List[Path]:
 
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description="Build canonical AAAI evaluation registry from processed and unseen datasets"
+        description="Build canonical  evaluation registry from processed and unseen datasets"
     )
     parser.add_argument("--root", type=str, default=".", help="Project root")
     parser.add_argument(
@@ -202,7 +194,7 @@ def main() -> None:
         "--dataset_manifest",
         type=str,
         default="",
-        help="Optional dataset manifest from 00_prepare_aaai_datasets.py",
+        help="Optional dataset manifest from 00_prepare_datasets.py",
     )
     parser.add_argument(
         "--registry_name",
@@ -331,7 +323,7 @@ def main() -> None:
         "tag": args.tag,
         "registry_version": "2.0",
         "task": "python_to_isabelle_translation",
-        "purpose": "AAAI evaluation registry for in-distribution and held-out cipher evaluation",
+        "purpose": "Data evaluation registry for in-distribution and held-out cipher evaluation",
         "project_root_abs": str(root),
         "project_root_rel": ".",
         "dataset_manifest_path": to_relpath(manifest_path, root) if manifest_path else None,
@@ -358,7 +350,7 @@ def main() -> None:
             "id_definition": "train/val/test are formed from the seen pool after excluding selected unseen ciphers",
             "cipher_holdout_definition": "unseen datasets are held-out cipher evaluations",
             "ood_definition": "cipher holdout is weaker than family-level OOD unless the protocol explicitly withholds an entire family",
-            "motivation": "Designed to support clearer AAAI evaluation bookkeeping and avoid hardcoded unseen dataset assumptions",
+            "motivation": "Designed to support clearer  evaluation bookkeeping and avoid hardcoded unseen dataset assumptions",
         },
     }
 
@@ -367,7 +359,7 @@ def main() -> None:
         json.dump(registry, f, indent=2, ensure_ascii=False)
 
     print("\n" + "=" * 72)
-    print("AAAI Evaluation Registry")
+    print(" Evaluation Registry")
     print("=" * 72)
     print(f"Tag: {args.tag}")
     print(f"Registry version: {registry['registry_version']}")
