@@ -125,6 +125,7 @@ Each `.thy` file in `thy ciphers/` can be type-checked by Isabelle 2025. The dir
 isabelle build -d "thy ciphers" TIA_Ciphers
 ```
 Individual theories can also be opened interactively with `isabelle jedit`.
+
 ---
 
 ## Pre-trained Adapters
