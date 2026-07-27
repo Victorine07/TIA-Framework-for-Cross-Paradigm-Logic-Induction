@@ -9,6 +9,8 @@ from .base_extractor import BaseCipherExtractor
 
 
 class SimonExtractor(BaseCipherExtractor):
+    # Cipher-specific implementation of Algorithm 1 (Section 3: Tiered Isomorphic Alignment - Dataset Construction and Registry) for the SIMON
+    # family (Feistel). Produces T1–T4 aligned Python ↔ Isabelle/HOL component pairs.
     """
     Debug-heavy, source-aligned SIMON extractor.
 
@@ -305,6 +307,8 @@ class SimonExtractor(BaseCipherExtractor):
     # ------------------------------------------------------------------
 
     def extract_components(self) -> List[Dict[str, Any]]:
+        # Implements Algorithm 1 (Section 3: Tiered Isomorphic Alignment - Dataset Construction and Registry): produces all T1–T4 aligned
+        # (instr, source, target, metadata) pairs for this cipher variant.
         self.dbg("START extract_components")
         self.debug_file_state()
         self.debug_python_symbols()

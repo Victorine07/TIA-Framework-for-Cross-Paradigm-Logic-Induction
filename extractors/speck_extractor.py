@@ -7,6 +7,8 @@ import re
 
 
 class SpeckExtractor(BaseCipherExtractor):
+    # Cipher-specific implementation of Algorithm 1 (Section 3: Tiered Isomorphic Alignment - Dataset Construction and Registry) for the SPECK
+    # family (ARX). Produces T1–T4 aligned Python ↔ Isabelle/HOL component pairs.
     """
     Source-aligned SPECK extractor with explicit tier metadata.
     
@@ -217,6 +219,8 @@ class SpeckExtractor(BaseCipherExtractor):
     # ========================================================================
     
     def _extract_t1_constants(self) -> List:
+        # Corresponds to Section 3: Tiered Isomorphic Alignment - The TIA Hierarchical Taxonomy, T1 (Lexical Foundation): atomic constants
+        # (word sizes, round counts, rotation amounts) as definition-aligned pairs.
         """Extract T1 constants."""
         prefix = self._get_variant_prefix()
         examples: List = []
@@ -288,6 +292,8 @@ class SpeckExtractor(BaseCipherExtractor):
     # ========================================================================
     
     def _extract_t2_primitives(self) -> List:
+        # Corresponds to Section 3: Tiered Isomorphic Alignment - The TIA Hierarchical Taxonomy, T2 (Functional Units): bitwise rotations,
+        # modular addition, and S-box lookups as typed fun/definition pairs.
         """Extract T2 primitives."""
         prefix = self._get_variant_prefix()
         examples: List = []
@@ -374,6 +380,8 @@ class SpeckExtractor(BaseCipherExtractor):
     # ========================================================================
     
     def _extract_t3_structural_components(self) -> List:
+        # Corresponds to Section 3: Tiered Isomorphic Alignment - The TIA Hierarchical Taxonomy, T3 (Structural Composition): round functions
+        # where Python for-loops map to Isabelle primrec/fold recursive definitions.
         """Extract T3 structural components."""
         prefix = self._get_variant_prefix()
         examples: List = []
@@ -442,6 +450,8 @@ class SpeckExtractor(BaseCipherExtractor):
     # ========================================================================
     
     def _extract_t4_orchestration_components(self) -> List:
+        # Corresponds to Section 3: Tiered Isomorphic Alignment - The TIA Hierarchical Taxonomy, T4 (Top-Level Orchestration): complete cipher
+        # interface and key schedule as fully recursive formal specifications.
         """Extract T4 orchestration components."""
         prefix = self._get_variant_prefix()
         examples: List = []

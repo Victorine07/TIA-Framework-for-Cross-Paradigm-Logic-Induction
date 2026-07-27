@@ -9,6 +9,8 @@ from .base_extractor import BaseCipherExtractor
 
 
 class HightExtractor(BaseCipherExtractor):
+    # Cipher-specific implementation of Algorithm 1 (Section 3: Tiered Isomorphic Alignment - Dataset Construction and Registry) for the HIGHT
+    # family (Feistel). Produces T1–T4 aligned Python ↔ Isabelle/HOL component pairs.
     """
     Source-aligned HIGHT-64/128 extractor with explicit tier metadata.
 
@@ -139,6 +141,8 @@ class HightExtractor(BaseCipherExtractor):
     # ------------------------------------------------------------------
 
     def extract_components(self) -> List[Dict[str, Any]]:
+        # Implements Algorithm 1 (Section 3: Tiered Isomorphic Alignment - Dataset Construction and Registry): produces all T1–T4 aligned
+        # (instr, source, target, metadata) pairs for this cipher variant.
         examples: List[Dict[str, Any]] = []
 
         examples.extend(self.extract_t1_constants())

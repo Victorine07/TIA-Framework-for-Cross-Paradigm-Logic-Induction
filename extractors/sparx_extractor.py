@@ -7,6 +7,8 @@ import re
 
 
 class SparxExtractor(BaseCipherExtractor):
+    # Cipher-specific implementation of Algorithm 1 (Section 3: Tiered Isomorphic Alignment - Dataset Construction and Registry) for the SPARX
+    # family (ARX). Produces T1–T4 aligned Python ↔ Isabelle/HOL component pairs.
     """Source-aligned SPARX extractor with explicit tier metadata."""
 
     def __init__(
@@ -51,6 +53,8 @@ class SparxExtractor(BaseCipherExtractor):
             self.thy_source = thy_content
     
     def extract_components(self) -> List[Dict]:
+        # Implements the outer loop of Algorithm 1 (Section 3: Tiered Isomorphic Alignment - Dataset Construction and Registry): iterates over all
+        # four TIA tiers and collects aligned component records for this cipher variant.
         examples: List[Dict] = []
 
         examples.extend(self._extract_t1_constants())
@@ -387,6 +391,8 @@ class SparxExtractor(BaseCipherExtractor):
         }
 
     def _extract_t1_constants(self) -> List[Dict]:
+        # Corresponds to Section 3: Tiered Isomorphic Alignment - The TIA Hierarchical Taxonomy, T1 (Lexical Foundation): extracts atomic values
+        # (word sizes, round counts, rotation amounts) as definition-aligned pairs.
         prefix = self._get_variant_prefix()
         params = self._get_sparx_params()
         examples: List[Dict] = []
@@ -426,6 +432,8 @@ class SparxExtractor(BaseCipherExtractor):
         return examples
 
     def _extract_t2_primitives(self) -> List[Dict]:
+        # Corresponds to Section 3: Tiered Isomorphic Alignment - The TIA Hierarchical Taxonomy, T2 (Functional Units): extracts bitwise rotations,
+        # modular addition, and S-box lookups as typed fun/definition pairs.
         prefix = self._get_variant_prefix()
         params = self._get_sparx_params()
         examples: List[Dict] = []
@@ -542,6 +550,9 @@ class SparxExtractor(BaseCipherExtractor):
         return examples
 
     def _extract_t3_structural_components(self) -> List[Dict]:
+        # Corresponds to Section 3: Tiered Isomorphic Alignment - The TIA Hierarchical Taxonomy, T3 (Structural Composition): extracts round
+        # functions and key schedule steps where Python for-loops map to Isabelle
+        # primrec/fold recursive definitions.
         prefix = self._get_variant_prefix()
         examples: List[Dict] = []
 
@@ -617,6 +628,8 @@ class SparxExtractor(BaseCipherExtractor):
         return examples
 
     def _extract_t4_orchestration_components(self) -> List[Dict]:
+        # Corresponds to Section 3: Tiered Isomorphic Alignment - The TIA Hierarchical Taxonomy, T4 (Top-Level Orchestration): extracts the complete
+        # cipher interface and key schedule as fully recursive formal specifications.
         prefix = self._get_variant_prefix()
         examples: List[Dict] = []
 

@@ -8,6 +8,8 @@ from .base_extractor import BaseCipherExtractor, JsonlRecord, SCHEMA_VERSION, ut
 
 
 class LeaExtractor(BaseCipherExtractor):
+    # Cipher-specific implementation of Algorithm 1 (Section 3: Tiered Isomorphic Alignment - Dataset Construction and Registry) for the LEA
+    # family (ARX, held-out unseen cipher). Produces T1–T4 aligned pairs.
     """LEA extractor compatible with the stricter BaseCipherExtractor JSONL schema."""
 
     def extract_components(self) -> List[JsonlRecord]:
@@ -160,6 +162,8 @@ class LeaExtractor(BaseCipherExtractor):
         )
 
     def _extract_t1_constants(self) -> List[JsonlRecord]:
+        # Corresponds to Section 3: Tiered Isomorphic Alignment - The TIA Hierarchical Taxonomy, T1 (Lexical Foundation): atomic constants
+        # (word sizes, round counts, rotation amounts) as definition-aligned pairs.
         records: List[JsonlRecord] = []
         prefix = self._variant_prefix()
         upper = self._variant_upper_prefix()
@@ -217,6 +221,8 @@ class LeaExtractor(BaseCipherExtractor):
         return records
 
     def _extract_t2_primitives(self) -> List[JsonlRecord]:
+        # Corresponds to Section 3: Tiered Isomorphic Alignment - The TIA Hierarchical Taxonomy, T2 (Functional Units): bitwise rotations,
+        # modular addition, and S-box lookups as typed fun/definition pairs.
         records: List[JsonlRecord] = []
         prefix = self._variant_prefix()
 
@@ -251,6 +257,8 @@ class LeaExtractor(BaseCipherExtractor):
         return records
 
     def _extract_t3_key_schedule(self) -> List[JsonlRecord]:
+        # Corresponds to Section 3: Tiered Isomorphic Alignment - The TIA Hierarchical Taxonomy, T3 (Structural Composition): key schedule steps
+        # where Python for-loops map to Isabelle primrec/fold recursive definitions.
         records: List[JsonlRecord] = []
         prefix = self._variant_prefix()
 
@@ -305,6 +313,8 @@ class LeaExtractor(BaseCipherExtractor):
         return records
 
     def _extract_t4_orchestration(self) -> List[JsonlRecord]:
+        # Corresponds to Section 3: Tiered Isomorphic Alignment - The TIA Hierarchical Taxonomy, T4 (Top-Level Orchestration): complete cipher
+        # interface and key schedule as fully recursive formal specifications.
         records: List[JsonlRecord] = []
         prefix = self._variant_prefix()
 
