@@ -5,24 +5,6 @@
 Evaluates a fine-tuned (LoRA-adapted) model using the exact same prompt
 construction, generation wrapper, normalization, and SV/SM/VC metric
 pipeline as the zero-shot/few-shot baseline (04_run_zero_shot_baseline.py).
-
-Why this script exists (per CLAUDE.md / EVALUATION.md / PIPELINE.md):
-- Trainer validation loss is not a paper metric. 03_finetune.py's
-  train_summary.json reports loss for optimization monitoring only --
-  fine-tuning is not "done" until the resulting checkpoint is evaluated
-  through generation + SV/SM/VC, which is what this script does.
-- Zero-shot and fine-tuned evaluation must not drift onto separate,
-  possibly-inconsistent implementations. This script imports the same
-  evaluation/generation.py, evaluation/eval_runner.py, and
-  prompting/prompt_builder.py + few_shot_selection.py modules as
-  04_run_zero_shot_baseline.py -- the only differences are (a) a LoRA
-  adapter is loaded on top of the base model, and (b) output goes to
-  results/finetuned/ instead of results/zero_shot/.
-
-Checkpoint selection (PIPELINE.md Stage 5): use validation loss for early
-stopping / checkpoint choice, and record which checkpoint was selected and
-why via --checkpoint-selection-note. Do not cherry-pick checkpoints based
-on test performance.
 """
 
 from __future__ import annotations
@@ -154,7 +136,7 @@ def main() -> None:
         type=str,
         default="not recorded",
         help="Free-text note on why this checkpoint was selected for evaluation "
-        "(e.g. 'best val loss at epoch 2') -- required for paper-facing runs per PIPELINE.md",
+        "(e.g. 'best val loss at epoch 2')",
     )
     parser.add_argument("--hf-cache-dir", type=str, default=None, help="Optional HF cache/models directory")
     parser.add_argument(
@@ -262,7 +244,7 @@ def main() -> None:
 
     if args.checkpoint_selection_note == "not recorded":
         print(
-            "WARNING: --checkpoint-selection-note was not provided. PIPELINE.md requires "
+            "WARNING: --checkpoint-selection-note was not provided. "
             "recording which checkpoint was selected and why for paper-facing runs."
         )
 
