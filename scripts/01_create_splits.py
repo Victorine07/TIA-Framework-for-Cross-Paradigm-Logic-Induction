@@ -1,5 +1,17 @@
 
 #!/usr/bin/env python3
+
+"""
+01_create_splits.py
+
+Pipeline stage 1: construct stratified train / val / test splits from the
+combined dataset, plus a held-out unseen-cipher partition. Family-aware
+partitioning ensures no cipher family appears in both the seen-cipher and
+unseen-cipher evaluation sets.
+
+Corresponds to Section 5: Experimental Setup (split construction, train/val/test boundaries, and unseen-cipher held-out design).
+"""
+
 import argparse
 import json
 import math
