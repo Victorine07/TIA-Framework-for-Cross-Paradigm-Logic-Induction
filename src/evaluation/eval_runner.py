@@ -5,6 +5,8 @@ src/evaluation/eval_runner.py
 Shared metric computation, failure-taxonomy classification, and result
 aggregation for every evaluation mode (zero-shot, few-shot, fine-tuned).
 
+Shared metric computation for Section 4: Evaluation Framework — results are comparable across zero-shot, few-shot, and fine-tuned evaluation modes.
+
 """
 
 from __future__ import annotations
