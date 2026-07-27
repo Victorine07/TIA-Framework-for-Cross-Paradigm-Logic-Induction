@@ -13,6 +13,8 @@ Writes: reports/paper/tables/metadata_ablation.tex
 Usage:
     python src/analysis/metadata_ablation.py
     python src/analysis/metadata_ablation.py --dataset test --mode zero_shot
+    
+Produces the ablation tables for Section 3: Tiered Isomorphic Alignment - Metadata Strategy Ablation and the corresponding rows in Section 6: Results and Discussion.
 """
 
 from __future__ import annotations
