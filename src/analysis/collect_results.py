@@ -17,6 +17,8 @@ Output:
     reports/results_by_model.json   -- nested by model/mode/strategy
     reports/results_table.txt       -- human-readable console table
     reports/results_table.tex       -- LaTeX tabular (with --latex)
+
+Produces the aggregated SV/SM/VC results tables reported across Section 6: Results and Discussion.
 """
 
 import argparse
