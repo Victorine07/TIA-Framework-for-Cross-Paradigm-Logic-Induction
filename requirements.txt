@@ -1,0 +1,21 @@
+# TIA — Python dependencies
+# Tested on Python 3.10, CUDA 11.8, NVIDIA V100 (16 GB).
+#
+# Install:
+#   pip install -r requirements.txt
+#
+# For GPU training, install PyTorch with the CUDA 11.8 wheel first:
+#   pip install torch==2.1.2 --index-url https://download.pytorch.org/whl/cu118
+# then install the rest:
+#   pip install -r requirements.txt
+
+# ── Core ML ────────────────────────────────────────────────────────────────
+torch>=2.1.0
+transformers>=4.45.0        # Qwen2.5 and DeepSeek-Coder-V2 require >=4.45
+peft>=0.13.0                # LoRA adapter training and inference
+bitsandbytes>=0.43.0        # 4-bit NF4 quantization (CUDA 11.8 compatible)
+accelerate>=0.27.0          # required by transformers for multi-GPU training
+
+# ── Analysis and figures ────────────────────────────────────────────────────
+numpy>=1.24.0
+matplotlib>=3.7.0
