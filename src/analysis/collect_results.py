@@ -132,7 +132,7 @@ def render_text_table(rows: list[dict], filter_dataset: str | None) -> str:
 
     lines = []
     header_ds = f"(dataset={filter_dataset})" if filter_dataset else "(all datasets averaged)"
-    lines.append(f"  AAAI Results Summary {header_ds}")
+    lines.append(f"  Results Summary {header_ds}")
     lines.append("=" * 90)
     lines.append(
         f"  {'Model':<22} {'Mode':<18} {'Strategy':<14} {'Dataset':<22} "
