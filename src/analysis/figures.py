@@ -51,7 +51,7 @@ METRIC_LABELS = {
 }
 
 # ── Shared style ───────────────────────────────────────────────────────────────
-# Fonts are set large so that after scaling to AAAI column width (~3.3 in)
+# Fonts are set large so that after scaling to  column width 
 # labels remain readable.  Base 14 pt → ~7 pt rendered at single-column width.
 plt.rcParams.update({
     "font.family":           "sans-serif",
