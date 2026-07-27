@@ -1,17 +1,6 @@
 #!/usr/bin/env python3
 """
 src/evaluation/generation.py
-
-Shared model/tokenizer loading and batched generation for every inference
-mode: zero-shot, few-shot, and fine-tuned-with-adapter. Centralizing this in
-one place is a direct response to two real failures hit running this
-pipeline on the cluster:
-- the DeepSeek zero-shot job failed because `trust_remote_code` was not
-  threaded through consistently;
-- CLAUDE.md/EVALUATION.md explicitly forbid zero-shot and fine-tuned
-  evaluation from drifting onto separate, possibly-inconsistent model
-  loading paths.
-
 Any new evaluation entry script should call `load_model_and_tokenizer` here
 rather than re-implementing model loading.
 """
