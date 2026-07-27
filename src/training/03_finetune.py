@@ -5,25 +5,6 @@
 Stage 3b: LoRA/PEFT fine-tuning on the SFT data produced by
 03_build_finetune_data.py.
 
-This is the canonical 03_* fine-tuning stage that REPO_MAP.md flags as
-missing. It does not exist anywhere else in this repo (verified by a
-repo-wide search for lora/peft/finetune/Trainer code before writing this
-file) -- there was no ICML-era script to inherit from.
-
-Design choices (per PIPELINE.md / CLUSTER.md / EVALUATION.md):
-- LoRA via peft, not full fine-tuning -- matches the project's stated
-  training direction and is the only memory-safe default for 7B-class
-  code models on a single GPU.
-- Loss is masked to the completion span only (the Isabelle/HOL output);
-  the prompt (instruction + Python input + metadata context) contributes
-  zero gradient. This mirrors the project's stated "loss only on target
-  output" contract.
-- Deterministic, conservative defaults; everything that affects
-  reproducibility is written to run_config.json before training starts,
-  so a crash hours into a cluster job is still postmortem-debuggable.
-- No assumption of internet access at runtime beyond the initial model
-  download (report_to defaults to none; nothing else reaches out).
-
 Inputs:
     - <split>_sft_<metadata_strategy>.jsonl from 03_build_finetune_data.py
 
@@ -87,6 +68,9 @@ def save_json(path: Path, obj: Dict[str, Any]) -> None:
 
 
 class SFTDataset(torch.utils.data.Dataset):
+    # Implements the instructional label masking described in Section 5: Experimental Setup - prompt tokens
+    # receive label −100 (zero gradient contribution); loss is computed exclusively over
+    # the Isabelle/HOL completion tokens. See the labels assignment below.
     """Pre-tokenizes (prompt, completion) pairs with loss masked over the prompt span."""
 
     def __init__(self, records: List[Dict[str, Any]], tokenizer, max_seq_length: int) -> None:
@@ -108,6 +92,8 @@ class SFTDataset(torch.utils.data.Dataset):
                 prompt_ids = prompt_ids[-budget_for_prompt:]
 
             input_ids = prompt_ids + completion_ids
+            # Corresponds to Section 5: Experimental Setup - label −100 masks the prompt span
+            # so cross-entropy loss is computed only over the Isabelle/HOL completion.
             labels = [-100] * len(prompt_ids) + completion_ids
 
             self.examples.append({"input_ids": input_ids, "labels": labels})
@@ -210,6 +196,8 @@ def load_model_and_tokenizer(args):
                 "BitsAndBytesConfig not available. Install compatible transformers/bitsandbytes."
             ) from e
 
+        # Corresponds to Section 5: Experimental Setup - 4-bit NF4 quantization with bfloat16 compute dtype,
+        # enabling 7B-class models to train on a single 16 GB V100.
         model_kwargs["quantization_config"] = BitsAndBytesConfig(
             load_in_4bit=True,
             bnb_4bit_quant_type="nf4",
@@ -227,6 +215,8 @@ def load_model_and_tokenizer(args):
 
 
 def attach_lora(model, args):
+    # Corresponds to Section 5: Experimental Setup - LoRA adapter with rank r=16, α=32,
+    # dropout=0.05, targeting all seven projection modules (q,k,v,o,gate,up,down_proj).
     try:
         from peft import LoraConfig, get_peft_model, prepare_model_for_kbit_training
     except ImportError as e:
