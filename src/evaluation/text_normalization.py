@@ -8,6 +8,10 @@ Purpose:
 - centralize cleanup logic used by zero-shot / few-shot / fine-tuned evaluators
 - extract the most likely Isabelle/HOL code span from raw model generations
 - keep normalization conservative so metrics still measure real differences
+
+
+Implements the output normalization step shared across all evaluation modes in Section 4: Evaluation Framework.
+
 """
 
 from __future__ import annotations
