@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """
 src/prompting/few_shot_selection.py
+
+Implements the support-example selection evaluated in Section 6: Results and Discussion - Few-Shot Evaluation: Structural Grounding Without Parameter Updates.
 """
 
 from __future__ import annotations
