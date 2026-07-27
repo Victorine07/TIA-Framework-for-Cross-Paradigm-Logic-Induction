@@ -1,17 +1,6 @@
 #!/usr/bin/env python3
 """
 src/prompting/few_shot_selection.py
-
-Deterministic, leakage-aware support-example selection for few-shot prompt
-construction. Per EVALUATION.md, every few-shot run must record k, the
-selection policy, the seed, and the source split the support pool came
-from -- and must never draw support examples from a forbidden source for a
-paper-facing run.
-
-This module does NOT load data or enforce split membership itself; it only
-selects from whatever pool the caller supplies. Held-out integrity is the
-caller's responsibility: always pass a pool built from an allowed split
-(normally "train"), never from the split currently being evaluated.
 """
 
 from __future__ import annotations
