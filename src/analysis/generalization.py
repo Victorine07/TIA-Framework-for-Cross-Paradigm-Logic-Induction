@@ -12,6 +12,8 @@ Writes: reports/paper/tables/generalization.tex
 
 Usage:
     python src/analysis/generalization.py
+
+Produces the ID vs OOD performance tables for Section 6: Results and Discussion - Generalization to Unseen Ciphers: Grammar Transfer, Not Memorization.
 """
 
 from __future__ import annotations
