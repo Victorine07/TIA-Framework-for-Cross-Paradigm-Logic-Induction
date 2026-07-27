@@ -38,6 +38,8 @@ class EnhancedMetadataHandler:
         self.strategy = strategy
 
     def enrich(self, instruction: str, metadata: Dict[str, Any]) -> str:
+        # Corresponds to Section 3: Tiered Isomorphic Alignment - Metadata Strategy Ablation: dispatches to one
+        # of the five prompt information-density strategies evaluated in Tables 3 and 4.
         constraint = "Provide ONLY the Isabelle/HOL code. No explanations."
         if self.strategy == "none" or not metadata:
             return f"Task: {instruction}\n{constraint}"
@@ -54,6 +56,8 @@ class EnhancedMetadataHandler:
         return f"Task: {instruction}\n{constraint}"
 
     def enrich_full(self, instruction: str, metadata: Dict[str, Any], constraint: str) -> str:
+        # Implements the "Full" strategy (Section 3: Tiered Isomorphic Alignment - Metadata Strategy Ablation): all variant parameters, operators,
+        # and transformation patterns — maximum information density.
         # Merge variant and variant_params for complete cipher spec
         tech_context: Dict[str, Any] = {}
         tech_context.update(metadata.get("variant", {}) or {})
@@ -82,6 +86,8 @@ class EnhancedMetadataHandler:
         return f"Technical Context: {spec_sheet}\nTask: {instruction}\n{constraint}"
 
     def enrich_structured(self, instruction: str, metadata: Dict[str, Any], constraint: str) -> str:
+        # Implements the "Structured" strategy (Section 3: Tiered Isomorphic Alignment - Metadata Strategy Ablation): family-specific curated
+        # parameter block (rotation constants for ARX/Feistel, S-box sizes for SPN).
         # Use variant_params (the actual field) for cipher parameters
         params = metadata.get("variant_params", {}) or {}
         variant = metadata.get("variant", {}) or {}
@@ -148,6 +154,8 @@ class EnhancedMetadataHandler:
         return f"Cryptographic Context:\n{param_block}\nTask: {instruction}\n{constraint}"
 
     def enrich_algorithmic(self, instruction: str, metadata: Dict[str, Any], constraint: str) -> str:
+        # Implements the "Algorithmic" strategy (Section 3: Tiered Isomorphic Alignment - Metadata Strategy Ablation): compact word-level
+        # precision and operation-set annotation.
         # Use variant_params (not algorithm_params which does not exist in the dataset)
         params = metadata.get("variant_params", {}) or {}
         semantics = metadata.get("semantics", {}) or {}
@@ -187,6 +195,8 @@ class EnhancedMetadataHandler:
         return f"Task: {instruction}\n{constraint}"
 
     def enrich_alljson(self, instruction: str, metadata: Dict[str, Any], constraint: str) -> str:
+        # Implements the "Alljson" strategy (Section 3: Tiered Isomorphic Alignment - Metadata Strategy Ablation): flattened JSON of the full
+        # metadata record — maximum information density at the cost of noise and verbosity.
         def flatten_dict(d: Dict[str, Any], parent_key: str = "", sep: str = ".") -> Dict[str, Any]:
             items = []
             for k, v in d.items():
