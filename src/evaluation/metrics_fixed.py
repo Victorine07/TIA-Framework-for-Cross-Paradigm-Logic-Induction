@@ -87,6 +87,7 @@ class FixedCryptographicMetrics:
 
     
     def syntax_validity(self, generated: str, reference: str) -> float:
+        # Corresponds to Section 4: Evaluation Framework, Eq. 1: SV = F_basic × F_align
         #print(f"\n=== DEBUG SV ===")
         #print(f"Generated: {generated}")
         #print(f"Reference: {reference}")
@@ -129,6 +130,8 @@ class FixedCryptographicMetrics:
 
     
     def _basic_syntax_validity(self, code: str) -> float:
+        # Implements F_basic in Eq. 1 (Section 4: Evaluation Framework): stack-based balanced-delimiter
+        # verification of a mandatory Isabelle entry-point (definition/fun/primrec/lemma).
         """Check if code has valid Isabelle syntax structure."""
         clean_code = self._remove_comments(code.strip())
         valid_commands = ["definition", "fun", "function", "primrec", "lemma"]
@@ -165,6 +168,9 @@ class FixedCryptographicMetrics:
         return 1.0  # All basic checks pass
 
     def _style_alignment(self, generated: str, reference: str) -> float:
+        # Implements F_align in Eq. 1 (Section 4: Evaluation Framework): command similarity (0.4 weight) +
+        # Isabelle-specific marker coverage (0.6 weight) − 0.3 per detected foreign
+        # anti-pattern (Python def, C-style braces, SML-style val).
         """Isolate Isabelle from SML/Pseudocode hallucinations."""
         gen_clean = self._remove_comments(generated)
         ref_clean = self._remove_comments(reference)
@@ -236,6 +242,7 @@ class FixedCryptographicMetrics:
 
 
     def semantic_match(self, generated: str, reference: str) -> float:
+        # Corresponds to Section 4: Evaluation Framework, Eq. 2: SM = (0.3·R_seq + 0.7·R_occ)·(1 − ΣP_crit)
         gen_logic = self._remove_comments_and_strings(generated)
         ref_logic = self._remove_comments_and_strings(reference)
 
@@ -262,9 +269,9 @@ class FixedCryptographicMetrics:
         seq_matcher = difflib.SequenceMatcher(None, gen_ops, ref_ops)
         sequence_ratio = seq_matcher.ratio()
 
-        # 3. CRITICAL CHANGE: Use geometric mean or a stricter weighting
-        # If the order is wrong, the score should tank even if the counts are right.
-        # Logic: Base similarity is 70% counts  , 30% order
+        # Implements the 70/30 R_occ/R_seq weighting from Eq. 2 (Section 4: Evaluation Framework).
+        # The 0.7 weight on occurrence reflects commutativity of XOR and modular
+        # addition in ARX ciphers: operator presence matters more than order.
         base_similarity = (sequence_ratio * 0.3) + (occurrence_ratio * 0.7)
         
         # 4. Critical Logic Penalty (The Deal Breaker)
@@ -283,6 +290,7 @@ class FixedCryptographicMetrics:
            
     
     def value_consistency(self, generated: str, reference: str) -> float:
+        # Corresponds to Section 4: Evaluation Framework, Eq. 3: VC = (ω·R_occ + (1−ω)·R_seq) − ΣP_{size,rot}
         """VC with commutative context awareness."""
         # 1. Extract ordered constants
         gen_vals = self._extract_all_constants_ordered(generated)
@@ -302,12 +310,11 @@ class FixedCryptographicMetrics:
         # 3. Sequence Score
         seq_score = difflib.SequenceMatcher(None, gen_vals, ref_vals).ratio()
         
-        # 4. Check if commutative context
+        # Context-adaptive weight ω from Eq. 3 (Section 4: Evaluation Framework):
+        # ω=0.8 for commutative contexts (XOR, addition); ω=0.4 for non-commutative.
         if self._is_commutative_context(generated, reference):
-            # 80% occurrence, 20% sequence for commutative
             base_score = (occurrence_ratio * 0.8) + (seq_score * 0.2)
         else:
-            # 40% occurrence, 60% sequence for non-commutative
             base_score = (occurrence_ratio * 0.4) + (seq_score * 0.6)
         
         # 5. Penalties
@@ -320,6 +327,8 @@ class FixedCryptographicMetrics:
         return max(0.0, min(1.0, base_score - penalty))
     
     def _is_commutative_context(self, gen: str, ref: str) -> bool:
+        # Determines the context-adaptive weight ω defined in Section 4: Evaluation Framework, Eq. 3.
+        # Returns True (ω=0.8) when commutative operators dominate; False (ω=0.4) otherwise.
         """
         Check for commutative operators in Isabelle, handling both
         prefix (xor, and, or) and infix (+, *, &&, ||) operators.
@@ -413,6 +422,8 @@ class FixedCryptographicMetrics:
 
     
     def _has_wrong_rotation(self, gen: str, ref: str) -> bool:
+        # Implements the rotation-amount component of P_{size,rot} in Eq. 3 (Section 4: Evaluation Framework).
+        # A mismatch in word_rotl/word_rotr constants triggers a 0.5 VC penalty.
         """Check if rotation amounts are different"""
         # Look for pattern: word_rotl/word_rotr followed by a number
         gen_rots = re.findall(r'word_rot[LlRr]\s+(\d+)', gen)
@@ -425,6 +436,8 @@ class FixedCryptographicMetrics:
         return set(gen_rots) != set(ref_rots)
     
     def _has_wrong_sizes(self, gen: str, ref: str) -> bool:
+        # Implements the bit-width component of P_{size,rot} in Eq. 3 (Section 4: Evaluation Framework).
+        # Mismatched word/block/key sizes trigger a 0.5 VC penalty.
         """Check if word/block/key sizes are different"""
         # Look for size patterns
         size_patterns = [
@@ -481,6 +494,8 @@ class FixedCryptographicMetrics:
         return len(stack) == 0
         
     def _extract_operators_list(self, code: str) -> List[str]:
+        # Extracts the ordered operator sequence used to compute R_occ and R_seq
+        # in Eq. 2 (Section 4: Evaluation Framework); preserves appearance order for sequence matching.
         """Extract ALL operators in their order of appearance."""
         if not code:
             return []
@@ -526,6 +541,8 @@ class FixedCryptographicMetrics:
     
 
     def _calculate_penalty(self, gen_ops: Set[str], ref_ops: Set[str]) -> float:
+        # Implements P_crit in Eq. 2 (Section 4: Evaluation Framework): 0.3 penalty per mismatched critical
+        # operator group (bitwise, arithmetic, rotations, list ops), capped at 1.0.
         """
         Refined Penalty: 0.3 per group mismatch.
         Allows for a 'three-strikes' degradation rather than a cliff.
