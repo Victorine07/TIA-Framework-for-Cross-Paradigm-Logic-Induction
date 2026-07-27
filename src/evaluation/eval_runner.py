@@ -5,12 +5,6 @@ src/evaluation/eval_runner.py
 Shared metric computation, failure-taxonomy classification, and result
 aggregation for every evaluation mode (zero-shot, few-shot, fine-tuned).
 
-CLAUDE.md / EVALUATION.md require these to be byte-for-byte identical
-across modes -- a different prompt or model checkpoint should be the only
-thing that can change a reported number, never a second, drifted metric
-implementation. `metrics_fixed.py` (FixedCryptographicMetrics) remains the
-one canonical metric implementation; this module only loads/calls it and
-adds aggregation + failure-bucketing on top.
 """
 
 from __future__ import annotations
@@ -57,14 +51,6 @@ FAILURE_CATEGORIES = (
 
 def classify_failure(generated: str, reference: str, sv: float, sm: float, vc: float) -> str:
     """Best-effort failure-category heuristic for the paper's error analysis.
-
-    This is a surface-level proxy built from SV/SM/VC and simple textual
-    signals -- it is NOT a real Isabelle parser/type-checker verdict.
-    CLAUDE.md's evaluation philosophy is explicit that surface similarity
-    must never be overclaimed as correctness; treat these labels as
-    descriptive buckets for manual spot-checking and reporting failure-mode
-    *proportions*, not as ground truth for any individual example.
-
     Heuristic ordering (first match wins):
     1. empty generation                          -> missing_definition
     2. SV == 0 (fails basic Isabelle structure)   -> syntax_error
